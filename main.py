@@ -8,7 +8,19 @@ class Problem(object):
 
     """
     @property
-    def num_date(self) -> int: return int(self.date_start + self.num_asset * 5 + 1)
+    def fake_sig_upscale(self) -> float: return 3
+
+    @property
+    def fake_sig_fraction(self) -> float: return .3
+
+    @property
+    def factor_trend_scale(self) -> float: return .1
+
+    @property
+    def signal_scale(self) -> float: return 2e-4
+
+    @property
+    def num_date(self) -> int: return int(self.date_start + self.num_asset * 2 + 1)
 
     @property
     def date_start(self) -> int:
@@ -49,9 +61,6 @@ class Problem(object):
     def factor_trend_window(self) -> int: return 5
 
     @property
-    def factor_trend_scale(self) -> float: return 5e-2
-
-    @property
     def slow_sig_window(self) -> int: return 20
 
     @property
@@ -62,15 +71,6 @@ class Problem(object):
 
     @property
     def fake_sig_window(self) -> int: return 20
-
-    @property
-    def fake_sig_fraction(self) -> float: return .3
-
-    @property
-    def signal_scale(self) -> float: return 1e-4
-
-    @property
-    def fake_sig_upscale(self) -> float: return 2
 
     @property
     def columns(self) -> Index:
@@ -200,7 +200,7 @@ class Problem(object):
             value = self.normal(scale=1., dim=self.num_asset)
             value = self.smooth(arr=value, window=window, shift=0)
             value = DataFrame(data=value / value.std(), columns=self.columns, index=self.index)
-            x_data.append(value.stack().rename(f'n{index}w{window}'))
+            x_data.append(value.stack().rename(f'noise{index}_window{window}'))
         x_data = concat(x_data + [f_data], axis=1)
         return x_data, data
 
@@ -326,10 +326,8 @@ def main() -> None:
     """
 
     """
-
     from numpy.random import seed
-
-    seed(0)
+    seed(34)
     Problem().create(location='/home/yuan/Downloads')
 
 
